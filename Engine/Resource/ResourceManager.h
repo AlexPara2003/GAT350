@@ -42,14 +42,3 @@ namespace neu
 		}
 	}
 }
-
-
-// vector [#,#,#,#] -> [#,#,#,#,#,#] 
-// [4] [#,#,#,#] :(
-// list [#] --> [#] ---> [#] 
-
-// map <key, data>
-// [key] -> data
-// [key] -> data
-// [key] -> data
-// [key] -> data

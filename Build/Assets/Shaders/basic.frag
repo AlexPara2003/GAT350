@@ -1,8 +1,15 @@
 #version 430 core
 
-out vec4 color;
+in vec3 color;
+in vec2 texcoords;
+
+out vec4 fcolor;
+
+uniform vec3 tint;
+uniform sampler2D textureSampler;
 
 void main()
 {
-	color = vec4(1.0, 1.0, 1.0, 1.0);
+	//fcolor = vec4(color * tint, 1.0);
+	fcolor = texture(textureSampler, texcoord);
 }
