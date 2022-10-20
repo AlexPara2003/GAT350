@@ -8,7 +8,7 @@ float vertices[] = {
 	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
 	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
 	-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-
+	
 	-0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
 	 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
 	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
@@ -90,8 +90,14 @@ int main(int argc, char** argv)
 	glm::mat4 model{ 1 };
 	glm::mat4 projection = glm::perspective(45.0f, neu::g_renderer.GetWidth() / (float)neu::g_renderer.GetHeight(), 0.01f, 100.0f);
 
-	glm::vec3 cameraPosition = glm::vec3{ 0, 0, 1 };
+	glm::vec3 cameraPosition = glm::vec3{ 0, 0, 100 };
 	float speed = 3;
+
+	std::vector<neu::Transform> transforms;
+	
+	for (size_t i = 0; i < 1000000; i++) {
+		transforms.push_back({ { neu::randomf(-10, 10),  neu::randomf(-10, 10),  neu::randomf(-10, 10) }, { neu::randomf(360) ,  neu::randomf(360) , neu::randomf(360)}});
+	}
 
 	bool quit = false;
 	while (!quit)
@@ -100,20 +106,29 @@ int main(int argc, char** argv)
 
 		if (neu::g_inputSystem.GetKeyState(neu::key_escape) == neu::InputSystem::KeyState::Pressed) quit = true;
 
+		if (neu::g_inputSystem.GetKeyState(neu::key_left) == neu::InputSystem::KeyState::Held) cameraPosition.x -= 5 * neu::g_time.deltaTime;
+		if (neu::g_inputSystem.GetKeyState(neu::key_right) == neu::InputSystem::KeyState::Held) cameraPosition.x += 5 * neu::g_time.deltaTime;
+		if (neu::g_inputSystem.GetKeyState(neu::key_down) == neu::InputSystem::KeyState::Held) cameraPosition.y -= 5 * neu::g_time.deltaTime;
+		if (neu::g_inputSystem.GetKeyState(neu::key_up) == neu::InputSystem::KeyState::Held) cameraPosition.y += 5 * neu::g_time.deltaTime;
+		if (neu::g_inputSystem.GetKeyState(neu::key_space) == neu::InputSystem::KeyState::Held) cameraPosition.z += 5 * neu::g_time.deltaTime;
+		if (neu::g_inputSystem.GetKeyState(neu::key_enter) == neu::InputSystem::KeyState::Held) cameraPosition.z -= 5 * neu::g_time.deltaTime;
 
 		//glm::mat4 view = glm::lookAt(cameraPosition, glm::vec3{ 0,0,0 }, glm::vec3{ 0,1,0 });
 		glm::mat4 view = glm::lookAt(cameraPosition, cameraPosition + glm::vec3{ 0, 0, -1 }, glm::vec3{ 0, 1, 0 });
-		model = glm::eulerAngleXYZ(0.0f, neu::g_time.time, 0.0f);
-		glm::mat4 mvp = projection * view * model;
+		//model = glm::eulerAngleXYZ(0.0f, neu::g_time.time, 0.0f);
 
 		//program->SetUniform("scale", std::sin(cool::g_time.time * 3));
-		program->SetUniform("mvp", mvp);
-
-
 
 		neu::g_renderer.BeginFrame();
 
-		vb->Draw();
+		for (size_t i = 0; i < transforms.size(); i++) {
+
+			transforms[i].rotation += glm::vec3{ 0, 90 * neu::g_time.deltaTime, 0 };
+			glm::mat4 mvp = projection * view * (glm::mat4)transforms[i];
+			material->GetProgram()->SetUniform("mvp", mvp);
+
+			vb->Draw();
+		}
 
 		neu::g_renderer.EndFrame();
 	}
