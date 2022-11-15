@@ -10,6 +10,5 @@ uniform sampler2D textureSampler;
 
 void main()
 {
-	//fcolor = vec4(color * tint, 1.0);
-	fcolor = texture(textureSampler, texcoord);
+	fcolor = texture(textureSampler, texcoord) * vec4(1, 1, 1, 1);
 }
