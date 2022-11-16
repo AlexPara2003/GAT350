@@ -1,5 +1,5 @@
 {
-  "program": "Shaders/fx/toon.prog",
+  "program": "Shaders/lit/texture.prog",
   "textures": [
     "Textures/ogre_diffuse.bmp",
     "Textures/ogre.bmp"

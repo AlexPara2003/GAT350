@@ -55,8 +55,7 @@ namespace neu
 
 	void Renderer::BeginFrame()
 	{
-		//Changes Background Color
-		glClearColor(0.0f, 0.0f, 0.0f, 1);
+		glClearColor(clear_color.r, clear_color.g, clear_color.b, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 

@@ -6,7 +6,6 @@
 
 namespace neu
 {
-	// forward declaration
 	class Actor;
 	class Renderer;
 	class Game;
@@ -19,13 +18,13 @@ namespace neu
 		Scene(const Scene& other) {}
 		~Scene() = default;
 
-		virtual bool Create(const std::string name, ...) override;
-
 		CLASS_DECLARATION(Scene)
 
-		void Initialize() override;
 		void Update() override;
-		void Draw(Renderer& renderer);
+		void Initialize() override;
+		void PreRender(Renderer& renderer);
+		void Render(Renderer& renderer);
+		virtual bool Create(std::string name, ...) override;
 
 		virtual bool Write(const rapidjson::Value& value) const override;
 		virtual bool Read(const rapidjson::Value& value) override;
@@ -33,22 +32,20 @@ namespace neu
 		void Add(std::unique_ptr<Actor> actor);
 		void RemoveAll();
 
-		template<typename T>
-		T* GetActor();
+		template<typename T> T* GetActor();
 
 		template<typename T = Actor>
 		T* GetActorFromName(const std::string& name);
 
 		template<typename T = Actor>
-		std::vector<T*> GetActorsFromTag(const std::string& tag);
+		std::vector<T*>GetActorsFromTag(const std::string& tag);
 
 		Game* GetGame() { return m_game; }
 
 	private:
-		Game* m_game =nullptr;
+		Game* m_game = nullptr;
 		std::list<std::unique_ptr<Actor>> m_actors;
 	};
-
 
 	template<typename T>
 	inline T* Scene::GetActor()
@@ -67,7 +64,7 @@ namespace neu
 	{
 		for (auto& actor : m_actors)
 		{
-			if (actor->GetName() == name)
+			if (name == actor->GetName())
 			{
 				return dynamic_cast<T*>(actor.get());
 			}
@@ -83,7 +80,7 @@ namespace neu
 
 		for (auto& actor : m_actors)
 		{
-			if (actor->GetTag() == tag)
+			if (tag == actor->GetTag())
 			{
 				T* tagActor = dynamic_cast<T*>(actor.get());
 				if (tagActor) result.push_back(tagActor);
